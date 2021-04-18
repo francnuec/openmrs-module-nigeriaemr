@@ -1,7 +1,6 @@
 package org.openmrs.module.nigeriaemr.api.dao.impl;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Patient;
@@ -11,13 +10,11 @@ import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.api.db.hibernate.HibernatePatientDAO;
-import org.openmrs.api.db.hibernate.PatientSearchCriteria;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaPatientDAO;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements NigeriaPatientDAO {
 	
@@ -80,10 +77,13 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 			query += " AND (patient.date_created <= :toDate OR patient.date_changed <= :toDate)";
 		SQLQuery sql = getSession().createSQLQuery(query);
 		sql.setParameterList("patientIds", patientIds);
-		if (fromDate != null)
-			sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
+		if (fromDate != null) {
+			sql.setTimestamp("fromDate", fromDate);
+		}
+		if (toDate != null) {
+			sql.setTimestamp("toDate", toDate);
+		}
+		
 		return sql.list();
 	}
 	
@@ -95,16 +95,17 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		
 		String query = "SELECT distinct(patient.patient_id) FROM encounter encounter,patient patient  WHERE (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
 		if (toDate != null)
-			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
+			query += " AND (encounter.date_created <= :toDate  OR encounter.date_changed <= :toDate )";
 		query += " AND encounter.voided = false";
 		query += " AND patient.patient_id = encounter.patient_id ";
 		query += " AND patient.voided = false ";
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		
-		sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
+		sql.setTimestamp("fromDate", fromDate);
+		if (toDate != null) {
+			sql.setTimestamp("toDate", toDate);
+		}
 		
 		patientIds = sql.list();
 		
@@ -121,14 +122,16 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		if (fromDate != null)
 			query += " AND (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
 		if (toDate != null)
-			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
+			query += " AND (encounter.date_created <= :toDate   OR encounter.date_changed <= :toDate )";
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		
-		if (fromDate != null)
-			sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
+		if (fromDate != null) {
+			sql.setTimestamp("fromDate", fromDate);
+		}
+		if (toDate != null) {
+			sql.setTimestamp("toDate", toDate);
+		}
 		
 		return sql.list();
 	}
@@ -143,13 +146,28 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		if (fromDate != null)
 			query += " AND (patient.date_created >= :fromDate OR patient.date_changed >= :fromDate)";
 		if (toDate != null)
-			query += " AND (patient.date_created <= :toDate OR patient.date_changed <= :toDate)";
+			query += " AND (patient.date_created <= :toDate  OR patient.date_changed <= :toDate )";
 		SQLQuery sql = getSession().createSQLQuery(query);
 		sql.setParameterList("identifiers", identifiers);
-		if (fromDate != null)
-			sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
+		if (fromDate != null) {
+			sql.setTimestamp("fromDate", fromDate);
+		}
+		if (toDate != null) {
+			sql.setTimestamp("toDate", toDate);
+		}
+		
+		return sql.list();
+	}
+	
+	@Override
+	public List<Integer> getPatientIdsByIdentifiersByType(String identifier, Integer identifierType) throws DAOException {
+		String query = "SELECT patient.patient_id from patient, patient_identifier "
+		        + "WHERE patient.patient_id = patient_identifier.patient_id "
+		        + "AND patient_identifier.identifier = :identifier "
+		        + "AND patient_identifier.identifier_type = :identifierType " + "AND patient.voided is false";
+		SQLQuery sql = getSession().createSQLQuery(query);
+		sql.setString("identifier", identifier);
+		sql.setInteger("identifierType", identifierType);
 		
 		return sql.list();
 	}
@@ -163,15 +181,16 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		
 		String query = "SELECT distinct(patient.patient_id) FROM encounter encounter,patient patient, WHERE patient.patient_id in :";
 		if (lastEncounterDate != null)
-			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
+			query += " AND (encounter.date_created <= :toDate  OR encounter.date_changed <= :toDate )";
 		query += " AND encounter.voided = false";
 		query += " AND encounter.voided = false ";
 		query += " AND patient.patient_id = encounter.patient_id ";
 		query += " AND patient.voided = false ";
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
-		if (lastEncounterDate != null)
-			sql.setDate("toDate", lastEncounterDate);
+		if (lastEncounterDate != null) {
+			sql.setTimestamp("toDate", lastEncounterDate);
+		}
 		
 		patientIds = sql.list();
 		

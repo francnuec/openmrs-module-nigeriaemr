@@ -155,6 +155,25 @@
              endDelimiter=";"/>
     </changeSet>
 
+    <changeSet id="create_pbs_table_2021021103267" author="wande">
+        <sql>
+            CREATE TABLE IF NOT EXISTS `biometricinfo` (`biometricInfo_Id` INT(11) NOT NULL AUTO_INCREMENT,
+            `patient_Id` INT(11) NOT NULL,`template` TEXT ,
+            `imageWidth` INT(11) DEFAULT NULL,`imageHeight` INT(11) DEFAULT NULL,
+            `imageDPI` INT(11) DEFAULT NULL,
+            `imageQuality` INT(11) DEFAULT NULL,
+            `fingerPosition` VARCHAR(50) DEFAULT NULL,
+            `serialNumber` VARCHAR(255) DEFAULT NULL,
+            `model` VARCHAR(255) DEFAULT NULL,
+            `manufacturer` VARCHAR(255) DEFAULT NULL,
+            `creator` INT(11) DEFAULT NULL,
+            `date_created` DATETIME DEFAULT NULL,
+            PRIMARY KEY(`biometricInfo_Id`),
+            FOREIGN KEY(patient_Id) REFERENCES patient(patient_Id),
+            FOREIGN KEY(creator) REFERENCES patient(creator)) AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8;
+        </sql>
+    </changeSet>
+
     <changeSet id="update_biometric_table_20201022350" author="wande">
         <dropNotNullConstraint tableName="biometricinfo" columnName="template" columnDataType="text"/>
         <addColumn tableName="biometricinfo">
@@ -220,6 +239,43 @@
         <createIndex  tableName="obs" indexName="index_obs_date_created">
             <column name="date_created"/>
         </createIndex>
+    </changeSet>
+    
+    <changeSet id="lga_trailing_bracket_fix_202111031017" author="wande">
+       <sql> UPDATE address_hierarchy_entry  SET user_generated_id = '73' WHERE uuid='12418a5d-c51c-4460-8651-6a34d6c9cc58'</sql>
+    </changeSet>
+
+    <changeSet id="lga_map_fix_202111031017" author="wande">
+        <sql>
+            update address_hierarchy_entry set name = 'AWKA NORTH', user_generated_id = 74 where address_hierarchy_entry_id=945;
+            update address_hierarchy_entry set name = 'AWKA SOUTH',  user_generated_id = 75 where address_hierarchy_entry_id=960;
+            update address_hierarchy_entry set user_generated_id = 438 where address_hierarchy_entry_id=1644;
+            update address_hierarchy_entry set user_generated_id = 58 where address_hierarchy_entry_id=1734;
+            update address_hierarchy_entry set user_generated_id = 440 where address_hierarchy_entry_id=1854;
+            update address_hierarchy_entry set user_generated_id = 515 where address_hierarchy_entry_id=3902;
+            update address_hierarchy_entry set user_generated_id = 733 where address_hierarchy_entry_id=4403;
+            update address_hierarchy_entry set user_generated_id = 276 where address_hierarchy_entry_id=4672;
+            update address_hierarchy_entry set name = 'FAKAI', user_generated_id = 223 where address_hierarchy_entry_id=6215;
+            update address_hierarchy_entry set name = 'ISIN', user_generated_id = 366 where address_hierarchy_entry_id=6730;
+            update address_hierarchy_entry set user_generated_id = 462 where address_hierarchy_entry_id=7045;
+            update address_hierarchy_entry set user_generated_id = 179 where address_hierarchy_entry_id=7860;
+            update address_hierarchy_entry set user_generated_id = 180 where address_hierarchy_entry_id=7872;
+            update address_hierarchy_entry set user_generated_id = 174 where address_hierarchy_entry_id=8218;
+            update address_hierarchy_entry set user_generated_id = 175 where address_hierarchy_entry_id=8230;
+            update address_hierarchy_entry set user_generated_id = 176 where address_hierarchy_entry_id=8241;
+            update address_hierarchy_entry set user_generated_id = 177 where address_hierarchy_entry_id=8252;
+            update address_hierarchy_entry set  name = 'YORRO', user_generated_id = 766 where address_hierarchy_entry_id=9908;
+            update address_hierarchy_entry set name = 'DANGE SHUNI', user_generated_id = 148 where address_hierarchy_entry_id=9550;
+            update address_hierarchy_entry set user_generated_id = 213 where address_hierarchy_entry_id=3244;
+            update address_hierarchy_entry set user_generated_id = 213 where address_hierarchy_entry_id=3244;
+            update address_hierarchy_entry set user_generated_id = 305 where address_hierarchy_entry_id=8275;
+            update address_hierarchy_entry set user_generated_id = 356 where address_hierarchy_entry_id=8323;
+            update address_hierarchy_entry set user_generated_id = 357 where address_hierarchy_entry_id=3533;
+            update address_hierarchy_entry set user_generated_id = 548 where address_hierarchy_entry_id=7289;
+            update address_hierarchy_entry set user_generated_id = 695 where address_hierarchy_entry_id=8835;
+            update address_hierarchy_entry set user_generated_id = 755 where address_hierarchy_entry_id=9782;
+            update address_hierarchy_entry set user_generated_id = 94 where address_hierarchy_entry_id=8868;
+        </sql>
     </changeSet>
  
 </databaseChangeLog>

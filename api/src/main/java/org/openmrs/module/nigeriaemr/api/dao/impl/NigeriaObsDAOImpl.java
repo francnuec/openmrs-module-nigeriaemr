@@ -13,6 +13,7 @@ import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.api.db.hibernate.HibernateObsDAO;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaObsDAO;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -255,10 +256,12 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		        + "  UNION ALL " + getQueryString(from, to, patientIds, includeVoided, "visit", "patient_id", false);
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
-		if (from != null)
-			sql.setDate("from", from);
-		if (to != null)
-			sql.setDate("to", to);
+		if (from != null) {
+			sql.setTimestamp("from", from);
+		}
+		if (to != null) {
+			sql.setTimestamp("to", to);
+		}
 		if (patientIds != null && patientIds.size() > 0)
 			sql.setParameterList("patientIds", patientIds);
 		
@@ -276,16 +279,16 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 			if (from != null)
 				query.append(" AND ").append(tableName).append(".date_created >= :from ");
 			if (to != null)
-				query.append(" AND ").append(tableName).append(".date_created <= :to ");
+				query.append(" AND ").append(tableName).append(".date_created <= :to  ");
 		} else {
 			query.append("  SELECT ").append(tableName).append(".").append(fieldName).append(" AS patient_id FROM ")
 			        .append(tableName).append(" WHERE TRUE");
 			if (from != null)
 				query.append(" AND (").append(tableName).append(".date_created >= :from OR ").append(tableName)
-				        .append(".date_created >= :from) ");
+				        .append(".date_changed >= :from) ");
 			if (to != null)
-				query.append(" AND (").append(tableName).append(".date_changed <= :to OR ").append(tableName)
-				        .append(".date_changed <= :to) ");
+				query.append(" AND (").append(tableName).append(".date_created <= :to OR ").append(tableName)
+				        .append(".date_changed <= :to ) ");
 		}
 		if (!includeVoided)
 			query.append(" AND ").append(tableName).append(".voided = FALSE ");
@@ -325,10 +328,12 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 			query += " AND (visit.date_created <= :toDate OR visit.date_changed >= :toDate)";
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
-		if (fromDate != null)
-			sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
+		if (fromDate != null) {
+			sql.setTimestamp("fromDate", fromDate);
+		}
+		if (toDate != null) {
+			sql.setTimestamp("toDate", toDate);
+		}
 		if (id != null)
 			sql.setInteger("person_id", id);
 		

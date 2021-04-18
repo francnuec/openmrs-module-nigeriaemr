@@ -355,24 +355,28 @@ public class PMTCTDictionary {
 
                 //get data for Syphilis and add to antenatal reg type
                 LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull all SYPHILIS", LogFormat.FATAL, LogLevel.live);
-                Syphilis syphilis = new Syphilis();
+                Syphilis syphilis = null;
                 obs = extractObs(Test_For_Syphilis_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
+                    syphilis = new Syphilis();
                     syphilis.setTestedForSyphilis(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
                 obs = extractObs(Syphilis_Test_Result_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
+                    if(syphilis == null) syphilis = new Syphilis();
                     syphilis.setSyphilisTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
                 obs = extractObs(Treated_For_Syphilis_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
+                    if(syphilis == null) syphilis = new Syphilis();
                     syphilis.setTreatedForSyphilis(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
                 obs = extractObs(Reffered_Syphilis_Positive_Client_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
+                    if(syphilis == null) syphilis = new Syphilis();
                     syphilis.setReferredSyphilisPositiveClient(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
-                registrationType.setSyphilis(syphilis);
+                if(syphilis != null)  registrationType.setSyphilis(syphilis);
 
                 antenatalRegistrationTypes.add(registrationType);
             }
@@ -794,7 +798,7 @@ public class PMTCTDictionary {
                     LocalDate testDate = obs.getValueDate().toInstant()
                             .atZone(ZoneId.systemDefault())
                             .toLocalDate();
-                    int ageAtTest = Period.between(birthDate,testDate).getYears();
+                    int ageAtTest = Period.between(birthDate,testDate).getMonths();
 
                     infantPCRTestingType.setAgeAtTest(ageAtTest);
                 }
@@ -1158,7 +1162,7 @@ public class PMTCTDictionary {
                 LocalDate testDate = obs.getValueDate().toInstant()
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate();
-                int ageAtTest = Period.between(birthDate,testDate).getYears();
+                int ageAtTest = Period.between(birthDate,testDate).getMonths();
                 infantRapidTestType.setAgeAtTest(ageAtTest);
             }
 

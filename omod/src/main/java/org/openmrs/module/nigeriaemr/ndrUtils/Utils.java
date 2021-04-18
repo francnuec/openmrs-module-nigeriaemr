@@ -283,6 +283,8 @@ public class Utils {
 	
 	public static final int RECENCY_INDENTIFIER_INDEX = 10;
 	
+	public static final int OPENMRS_IDENTIFIER_INDEX = 3;
+	
 	/* KEY FORMS */
 	//--These 4 forms was used to construct a HIVEncounterType
 	public final static int ADULT_INITIAL_ENCOUNTER_TYPE = 26;
@@ -309,7 +311,11 @@ public class Utils {
 	
 	public final static int YES_NO_VALUE = 1065;
 	
-	public final static int YES_NO_ALTERNATIVE_VALUE = 1;
+	public final static int REGIMEN_MEDICATION_REASON_STOPPED_REGIMEN_VALUE = 165770;
+	
+	public final static int DATE_STOPPED_REGIMEN = 1;
+	
+	public final static int REASON_STOPPED_REGIMEN = 1252;
 	
 	/*
 	       HIVQuestionsType
@@ -433,7 +439,7 @@ public class Utils {
 			return null;
 		} else {
 			try {
-				return new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(lastRunDateString);
+				return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(lastRunDateString);
 			}
 			catch (Exception e) {
 				System.out.println("Last Date was not in the correct format");
@@ -500,7 +506,7 @@ public class Utils {
 	    return encounter;
 	}*/
 	public static void updateLast_NDR_Run_Date(Date date) {
-		String dateString = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date);
+		String dateString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
 		Context.getAdministrationService().updateGlobalProperty("ndr_last_run_date", dateString);
 	}
 	
@@ -828,7 +834,7 @@ public class Utils {
 			return null;
 		}
 		return obsList.stream().filter(ele -> ele.getConcept().getConceptId() == conceptID &&
-				ele.getValueCoded().getId() == conceptID).findFirst().orElse(null);
+				ele.getValueCoded().getId() == valueCoded).findFirst().orElse(null);
 	}
 	
 	public static List<Integer> getCareCardObs(Patient patient, Date endDate) {
@@ -1430,4 +1436,22 @@ public class Utils {
 		}
 		return ids;
     }
+	
+	public static PatientIdentifier getPatientIdentifier(Set<PatientIdentifier> patientIdentifiers, Integer identifierTypeId) {
+		if (patientIdentifiers != null && patientIdentifiers.size() > 0) {
+			PatientIdentifier voided = null;
+			for (PatientIdentifier patientIdentifier : patientIdentifiers) {
+				PatientIdentifierType patientIdentifierType = patientIdentifier.getIdentifierType();
+				if (identifierTypeId.equals(patientIdentifierType.getPatientIdentifierTypeId())) {
+					if (patientIdentifier.isVoided()) {
+						voided = patientIdentifier;
+					} else {
+						return patientIdentifier;
+					}
+				}
+			}
+			return voided;
+		}
+		return null;
+	}
 }
