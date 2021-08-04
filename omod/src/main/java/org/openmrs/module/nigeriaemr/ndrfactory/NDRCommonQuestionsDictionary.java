@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
 import org.apache.commons.lang3.StringUtils;
@@ -107,7 +103,18 @@ public class NDRCommonQuestionsDictionary {
         map.put(160538, "9"); //ANC/PMTCT
         map.put(160536, "12"); //In Patient
         map.put(160537, "12");//Current Clinic Patient
-        map.put(160542, "2");//OPD
+        //map.put(160542, "2");//OPD
+
+        map.put(160542, "1");//OPD
+        map.put(160536, "2");// Inpatient
+        map.put(160539, "3");//  VCT
+        map.put(160541, "4"); //TB DOT
+        map.put(160546, "5");//  STI Clinic
+        map.put(160538, "6");//  ANC/PMTCT
+        map.put(160563, "7");//  Transfer-in
+        map.put(160545, "8");// Outreaches HIV enrollment
+        map.put(165794, "9");// Index testing
+
         map.put(160541, "6");//TB DOTS
         map.put(160543, "4");//CBO
         map.put(160545, "4");//Outreaches
@@ -589,8 +596,10 @@ HIVQuestionsType
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
-                if (!ndrCode.equals("")) {
-                    hivQuestionsType.setCareEntryPoint(ndrCode);
+                if (ndrCode != null){
+                    if (!ndrCode.equals("")) {
+                        hivQuestionsType.setCareEntryPoint(ndrCode);
+                    }
                 }
 
             }
@@ -603,8 +612,10 @@ HIVQuestionsType
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
-                if (!ndrCode.equals("")) {
-                    hivQuestionsType.setFirstHIVTestMode(ndrCode);
+                if (ndrCode != null) {
+                    if (!ndrCode.equals("")) {
+                        hivQuestionsType.setFirstHIVTestMode(ndrCode);
+                    }
                 }
             }
             // Where first tested positive missing
@@ -613,7 +624,9 @@ HIVQuestionsType
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
-                hivQuestionsType.setPriorArt(ndrCode);
+                if (ndrCode != null) {
+                    hivQuestionsType.setPriorArt(ndrCode);
+                }
             }
             obs =  Utils.extractObs(Utils.MEDICAL_ELIGIBLE_DATE_CONCEPT,obsListId);
             if (obs != null) {
@@ -624,7 +637,9 @@ HIVQuestionsType
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
-                hivQuestionsType.setReasonMedicallyEligible(ndrCode);
+                if (ndrCode != null) {
+                    hivQuestionsType.setReasonMedicallyEligible(ndrCode);
+                }
             }
             obs =  Utils.extractObs(Utils.DATE_INITIAL_ADHERENCE_COUNCELING_CONCEPT,obsListId);
             if (obs != null) {
@@ -654,10 +669,13 @@ HIVQuestionsType
                 if (obs != null && obs.getValueCoded() != null) {
                     valueCoded = obs.getValueCoded().getConceptId();
                     ndrCode = pharmacyDictionary.getRegimenMapValue(valueCoded);
-                    cst = new CodedSimpleType();
-                    cst.setCode(ndrCode);
-                    cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
-                    hivQuestionsType.setFirstARTRegimen(cst);
+                    if (ndrCode != null) {
+                        cst = new CodedSimpleType();
+                        cst.setCode(ndrCode);
+                        cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
+                        hivQuestionsType.setFirstARTRegimen(cst);
+                    }
+
                 }
             }
             Date artStartDate = Utils.extractARTStartDate(groupedpatientBaselineObsByConcept);//Obs(Utils.ART_START_DATE_CONCEPT, obsList);
@@ -669,7 +687,9 @@ HIVQuestionsType
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
-                hivQuestionsType.setWHOClinicalStageARTStart(ndrCode);
+                if (ndrCode != null) {
+                    hivQuestionsType.setWHOClinicalStageARTStart(ndrCode);
+                }
             }
             obs =  Utils.extractObs(Utils.WEIGHT_AT_START_CONCEPT,obsListId);
             if (obs != null && obs.getValueNumeric() != null) {
@@ -685,7 +705,9 @@ HIVQuestionsType
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
-                hivQuestionsType.setFunctionalStatusStartART(ndrCode);
+                if (ndrCode != null) {
+                    hivQuestionsType.setFunctionalStatusStartART(ndrCode);
+                }
             }
             obs =  Utils.extractObs(Utils.CD4_AT_START,obsListId);
             if (obs != null && obs.getValueNumeric() != null) {
@@ -693,10 +715,12 @@ HIVQuestionsType
                 hivQuestionsType.setCD4AtStartOfART(String.valueOf(valueNumericInt));
             }
 
-            obs = Utils.extractLastObs(Utils.REASON_FOR_TERMINATION, obsNewList);
+            obs = Utils.extractObs(Utils.REASON_FOR_TERMINATION, obsListId);
             if (obs != null && obs.getValueCoded() != null) {
                 ndrCodedValue = getHIVQuestionMappedValue(obs.getValueCoded().getConceptId());
-                hivQuestionsType.setReasonForStoppedTreatment(ndrCodedValue);
+                if (ndrCodedValue != null) {
+                    hivQuestionsType.setReasonForStoppedTreatment(ndrCodedValue);
+                }
             }
 
             obs = Utils.extractObsByValues(Utils.REASON_FOR_TERMINATION_CONCEPT, Utils.TRANSFERRED_OUT_CONCEPT, obsList);
@@ -732,7 +756,7 @@ HIVQuestionsType
             /*
                 Use date confirmed positve or visit date of the HIVEnrollmentForm
              */
-            Date enrollmentDate = Utils.extractEnrollmentDate(groupedpatientBaselineObsByConcept);
+            Date enrollmentDate = Utils.extractEnrollmentDate(patient, Utils.HIV_Enrollment_Encounter_Type_Id);
             if (enrollmentDate != null) {
                 hivQuestionsType.setEnrolledInHIVCareDate(utils.getXmlDate(enrollmentDate));
             }

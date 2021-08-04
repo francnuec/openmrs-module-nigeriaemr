@@ -58,6 +58,7 @@ public class ClinicalDictionary {
     private void loadDictionary() {
         //Map OpenMRS concepts to corresponding NDR values
         map.put(123, "12");
+        map.put(165686, "1e");
         //adherence
         map.put(165289, "P");
         map.put(165287, "G");
@@ -246,8 +247,8 @@ public class ClinicalDictionary {
         //for regimen switch
         map.put(102, "1");
         map.put(165048, "P");
-        map.put(165049, "NP");
-        map.put(165047, "BF");
+        map.put(165047, "NP");
+        map.put(165049 , "BF");
         map.put(160559, "3");
         map.put(160567, "4");
         map.put(160561, "5");
@@ -298,10 +299,12 @@ public class ClinicalDictionary {
         for (Date date : visitDateSet) {
             String day = Utils.getFullDay(date);
             obsPerVisitDate = groupedObsByVisitDate.get(day);
-            if (!obsPerVisitDate.isEmpty()) {
-                hivEncounterType = createHIVEncounterType(patient, date,  obsPerVisitDate);
+            if (obsPerVisitDate  != null) {
+                if(!obsPerVisitDate.isEmpty()) {
+                    hivEncounterType = createHIVEncounterType(patient, date, obsPerVisitDate);
+                }
+                hivEncounterTypeList.add(hivEncounterType);
             }
-            hivEncounterTypeList.add(hivEncounterType);
         }
         return hivEncounterTypeList;
     }
@@ -346,7 +349,7 @@ public class ClinicalDictionary {
 
         }
 
-
+/*
         hivEncounterType.setStoppedRegimen(retrieveStoppedRegimen(obsListForOneVisit));//Stopped Regimen
         if (retrieveStoppedRegimen(obsListForOneVisit)) {
             obs = Utils.extractObs(Utils.REASON_STOPPED_REGIMEN, obsListForOneVisit);//ReasonForRegimenStopped
@@ -356,6 +359,15 @@ public class ClinicalDictionary {
                 hivEncounterType.setReasonForStoppedRegimen(ndrCode);
             }
         }
+
+        DateTime dateStoppedRegimen = null;
+        //  nextAppointmentDate = Utils.extractMedicationDuration(visitDate, obsListForOneVisit);
+        obs = Utils.extractObs(Utils.DATE_STOPPED_REGIMEN, obsListForOneVisit);
+        if (obs != null) {
+            dateStoppedRegimen = new DateTime(obs.getValueDate());
+            hivEncounterType.setDateStoppedRegimen(utils.getXmlDate(dateStoppedRegimen.toDate()));
+
+        }*/
 
         if (nextAppointmentDate != null) {
             daysOnARV = Utils.getDateDiffInDays(visitDate, nextAppointmentDate.toDate());
